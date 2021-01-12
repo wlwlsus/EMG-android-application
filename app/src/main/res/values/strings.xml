@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">EMG</string>
+    <string name="devices">블루투스 기기 설정</string>
 </resources>

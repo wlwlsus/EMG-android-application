@@ -5,15 +5,19 @@ import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
-import kotlinx.android.synthetic.main.activity_example.*
-import kotlinx.android.synthetic.main.activity_main.*
+import androidx.fragment.app.FragmentManager
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), FragmentManager.OnBackStackChangedListener{
+    init {
+        Log.e("init","MainActivity")
+    }
     var btAdapter: BluetoothAdapter? = null
     private val REQUEST_ENABLE_BT = 1
 
@@ -23,10 +27,10 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_example)
+        setContentView(R.layout.activity_main)
 
         // show paired devices
-        showPairedDevice()
+        //showPairedDevice()
 
         // 권한 체크
         permissionCheck()
@@ -34,11 +38,19 @@ class MainActivity : AppCompatActivity() {
         // Enable bluetooth
         startBluetooth()
 
+        //val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+
+        supportFragmentManager.addOnBackStackChangedListener(this)
+
+        if (savedInstanceState == null) supportFragmentManager.beginTransaction().add(R.id.fragment, DevicesFragment(), "devices").commit() else onBackStackChanged()
+
     }
 
     private fun permissionCheck(){
         // Get permission
-        val permissionList = arrayOf<String>(
+        val permissionList = arrayOf(
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION
         )
@@ -57,7 +69,7 @@ class MainActivity : AppCompatActivity() {
     private fun showPairedDevice(){
         btArrayAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1)
         deviceAddressArray = ArrayList()
-        listview.adapter = btArrayAdapter
+        //listview.adapter = btArrayAdapter
     }
 
     fun onClickButtonPaired(view: View?) {
@@ -75,5 +87,15 @@ class MainActivity : AppCompatActivity() {
                 deviceAddressArray!!.add(deviceHardwareAddress)
             }
         }
+    }
+
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return true
+    }
+
+    override fun onBackStackChanged() {
+        supportActionBar!!.setDisplayHomeAsUpEnabled(supportFragmentManager.backStackEntryCount > 0)
     }
 }
