@@ -44,5 +44,9 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
-    implementation 'com.github.mik3y:usb-serial-for-android:3.3.0'
+    // Real Time Graph
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+
+    // Coroutine
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2'
 }

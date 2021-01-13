@@ -98,8 +98,8 @@ class DevicesFragment : ListFragment() {
          * sort by name, then address. sort named devices first
          */
         fun compareTo(a: BluetoothDevice, b: BluetoothDevice): Int {
-            val aValid = a.name != null && !a.name.isEmpty()
-            val bValid = b.name != null && !b.name.isEmpty()
+            val aValid = a.name != null && a.name.isNotEmpty()
+            val bValid = b.name != null && b.name.isNotEmpty()
             if (aValid && bValid) {
                 val ret = a.name.compareTo(b.name)
                 return if (ret != 0) ret else a.address.compareTo(b.address)
