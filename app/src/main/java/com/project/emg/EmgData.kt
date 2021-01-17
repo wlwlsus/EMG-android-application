@@ -12,29 +12,26 @@ object EmgData {
 
     var emgDataStr = ""
     var emgDataList = mutableListOf<String>()
+    var emgIntArray = mutableListOf<Int>()
     var floatTemp = 0F
     var dataIndex = 0
-    var globalTimerCounter : Timer? = null
 
     fun getEmgValue() {
         try{
             emgDataList = emgDataStr.split(",") as MutableList<String>
-            Log.e("데이터 인덱스", dataIndex.toString())
-
-//            if(emgDataList[0] == "" && emgDataList.size > 0){
-//                Log.e("데이터 1번","$emgDataList")
-//            }
 
             if(emgDataList.size == 0 || emgDataList.size < dataIndex){
-                Log.e("데이터 배열1", emgDataList.size.toString())
                 return
             }
+
             else{
-                floatTemp = try {
-                    Log.e("데이터 배열 크기", emgDataList.size.toString())
-                    emgDataList[dataIndex].toFloat()
+                try {
+                    emgIntArray.add(emgDataList[dataIndex].toInt())
+                    floatTemp = emgDataList[dataIndex].toFloat()
+
                 }catch (e : Exception){
-                    120F
+                    emgIntArray.add(emgDataList[dataIndex].toInt())
+                    floatTemp = 120F
                 }
 
             }
@@ -48,14 +45,7 @@ object EmgData {
     }
 
     fun resetDataIndex(){
+        emgIntArray = mutableListOf()
         dataIndex = 0
     }
-
-    fun timerOff() {
-        if (globalTimerCounter != null) {
-            globalTimerCounter!!.cancel()
-        }
-    }
-
-
 }

@@ -27,12 +27,19 @@ import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import com.project.emg.EmgData.dataIndex
+import com.project.emg.EmgData.emgDataList
 import com.project.emg.EmgData.emgDataStr
+import com.project.emg.EmgData.emgIntArray
 import com.project.emg.EmgData.floatTemp
 import com.project.emg.EmgData.getEmgValue
 import com.project.emg.EmgData.plusDataIndex
 import com.project.emg.EmgData.resetDataIndex
+import com.project.emg.ml.Emg
 import kotlinx.android.synthetic.main.fragment_terminal.*
+import org.tensorflow.lite.DataType
+import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
+import java.nio.ByteBuffer
+import java.nio.IntBuffer
 import java.util.*
 
 
@@ -383,25 +390,44 @@ class TerminalFragment : Fragment(), ServiceConnection, SerialListener {
             //Log.e("CharSequence", (receiveText?.length().toString()))
             //Log.e("체크 데이터 : ", receiveChar.toString())
 
-            if(emgDataStr.length > 1500){
+            if(emgDataStr.length > 2000){
                 Log.e("데이터 String 길이", emgDataStr.length.toString())
                 getEmgValue()
-                resultMessage()
-                disconnect()
+
+                if (EmgData.emgDataList.size >= 276){
+                    //capacity = 276 * 4 = 1104
+                    val intBuffer = IntBuffer.wrap(emgIntArray as IntArray)
+                    val buf : ByteBuffer = ByteBuffer.allocate(intBuffer.capacity() * 4)
+
+                    resultMessage(buf)
+                    disconnect()
+                }
             }
             //receiveText?.append(receiveChar)
             emgDataStr += receiveChar
         }
     }
 
-    private fun resultMessage(){
-        val random = Random()
-        val num = random.nextInt(10)
-        if(num > 5) receiveText!!.text = "예"
-        else receiveText!!.text = "아니오"
+    private fun resultMessage(byteBuffer : ByteBuffer){
+        val model = Emg.newInstance(activity!!.applicationContext)
+
+        // Creates inputs for reference.
+        val inputFeature0 = TensorBuffer.createFixedSize(intArrayOf(1, 276), DataType.FLOAT32)
+        inputFeature0.loadBuffer(byteBuffer)
+
+        // Runs model inference and gets result.
+        val outputs = model.process(inputFeature0)
+        val outputFeature0 = outputs.outputFeature0AsTensorBuffer
+
+        if(outputFeature0.intArray[0] == 0)
+        {
+            receiveText!!.text = "아니오"
+        }
+        else receiveText!!.text = "예"
+
+        // Releases model resources if no longer used.
+        model.close()
     }
-
-
 
     private fun status(str: String) {
         val spn = SpannableStringBuilder(
