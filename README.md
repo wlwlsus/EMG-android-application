@@ -1,7 +1,7 @@
 # EMG
 Deu Team EMG Machine Learning Project
 
-![emg_simul](https://user-images.githubusercontent.com/58021968/139531818-c2dacae8-b189-4eeb-81af-04dbf6177986.gif)
+https://user-images.githubusercontent.com/58021968/139532161-a3aff4e9-bbe7-4cc1-9e2a-b0291aa716b9.mp4
 
 ## 구현 기능
 
