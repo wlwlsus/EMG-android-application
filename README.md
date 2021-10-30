@@ -1,4 +1,4 @@
-# EMG
+# Electromyography ML Application
 Deu Team EMG Machine Learning Project
 
 https://user-images.githubusercontent.com/58021968/139532161-a3aff4e9-bbe7-4cc1-9e2a-b0291aa716b9.mp4
